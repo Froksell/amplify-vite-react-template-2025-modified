@@ -1,0 +1,35 @@
+# Compiled object files
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Temporary files
+*~
+*.swp
+*.DS_Store
+
+# Visual Studio / VSCode / IDE files
+.vscode/
+.vs/
+*.code-workspace
+
+# CMake build folders
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Logs
+*.log
+
+# Ignore users.txt if you don't want passwords committed
+users.txt
