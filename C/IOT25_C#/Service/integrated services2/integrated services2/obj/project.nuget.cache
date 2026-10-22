@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "OwxRhh/JZZQ=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Jermaine\\_Dev\\C\\IOT25_C#\\Service\\integrated services2\\integrated services2\\integrated services2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Jermaine\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.24.1-preview.1\\microsoft.visualstudio.azure.containers.tools.targets.1.24.1-preview.1.nupkg.sha512"
+  ],
+  "logs": []
+}

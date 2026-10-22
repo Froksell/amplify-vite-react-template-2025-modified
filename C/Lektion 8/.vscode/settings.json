@@ -1,0 +1,10 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\Jermaine\\_Dev\\C\\Lektion 8",
+            "binaryPath": "c:\\Users\\Jermaine\\_Dev\\C\\Lektion 8\\main.exe",
+            "miDebuggerPath": "C:\\msys64\\mingw64\\bin",
+            "binaryArgs": []
+        }
+    ]
+}

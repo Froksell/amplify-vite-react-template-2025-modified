@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\Jermaine\\_Dev\\C\\IOT25_Lektion_4_bibliotek-main",
+            "binaryPath": "c:\\Users\\Jermaine\\_Dev\\C\\IOT25_Lektion_4_bibliotek-main\\main.exe",
+            "binaryArgs": []
+        }
+    ]
+}

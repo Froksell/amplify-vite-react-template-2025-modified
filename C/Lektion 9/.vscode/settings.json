@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "iostream": "cpp"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\Jermaine\\_Dev\\C\\Lektion 9",
+            "binaryPath": "c:\\Users\\Jermaine\\_Dev\\C\\Lektion 9\\main.exe",
+            "binaryArgs": []
+        }
+    ]
+}

@@ -23,8 +23,7 @@ int main()
     std::cout << "=====LogIn Meny=====\n " << std::endl;
     std::cout << "1. login\n" << std::endl;
     std::cout << "2. creat account\n" << std::endl;
-    std::cout << "3. password crack\n" << std::endl;
-    std::cout << "4. exit\n" << std::endl;
+    std::cout << "3. exit\n" << std::endl;
     std::cout << "====================" << std::endl;
     std::cin >> c;  
     std::cout << std::endl;
@@ -42,9 +41,6 @@ int main()
         break;
     
     case 3:
-        
-        break;
-    case 4:
         std::cout << "Exit app....\n" << std::endl;
         return 0;
 
