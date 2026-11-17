@@ -43,6 +43,15 @@ ChartJS.register(
 
 const client = generateClient<Schema>();
 
+function readShadow(value: unknown): { sendInterval?: number } {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return parsed && typeof parsed === "object" ? parsed as { sendInterval?: number } : {};
+  } catch {
+    return {};
+  }
+}
+
 function App() {
 
   const { user, signOut } = useAuthenticator();
@@ -211,55 +220,93 @@ function App() {
         gap="20px"
         wrap="nowrap"
       >
-        {(item, index) => (
-          <Card
-            key={index}
-            borderRadius="medium"
-            maxWidth="20rem"
-            variation="outlined"
-          >
+        {(item, index) => {
+          const desired = readShadow(item.shadow_desired).sendInterval;
+          const reported = readShadow(item.shadow_reported).sendInterval;
+          return (
+            <Card
+              key={index}
+              borderRadius="medium"
+              maxWidth="20rem"
+              variation="outlined"
+            >
 
-            <View padding="xs">
+              <View padding="xs">
 
-              <br />
-              <Flex>
-                Status:
-                <Badge variation={(item?.status == "connected") ? "success" : "error"} key={item.device_id}>
-                  {item?.status ? item?.status.charAt(0).toUpperCase() + String(item?.status).slice(1) : ""}
-                </Badge>
-              </Flex>
-              <Flex>
-                Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0]?.timestamp ? moment(parseInt(String(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0].timestamp))).fromNow() : "Never"}
-              </Flex>
-              <br />
-              <Flex>ID: {item.device_id}</Flex>
-              <TextField
-                label="Webhook URL"
-                defaultValue={item.webhook_url ?? ""}
-                onBlur={(e) =>
-                  client.models.Devices.update({
-                    device_id: item.device_id,
-                    webhook_url: e.target.value,
-                  })
-                }
-              />
-              <SwitchField
-                label="Webhook enabled"
-                isChecked={item.webhook_enabled === true}
-                onChange={(e) =>
-                  client.models.Devices.update({
-                    device_id: item.device_id,
-                    webhook_enabled: e.target.checked,
-                  })
-                }
-              />
-              <br />
-              <Button variation="destructive" isFullWidth onClick={() => deleteDevice(item.device_id)}>
-                Delete
-              </Button>
-            </View>
-          </Card>
-        )}
+                <br />
+                <Flex>
+                  Status:
+                  <Badge variation={(item?.status == "connected") ? "success" : "error"} key={item.device_id}>
+                    {item?.status ? item?.status.charAt(0).toUpperCase() + String(item?.status).slice(1) : ""}
+                  </Badge>
+                </Flex>
+                <Flex>
+                  Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0]?.timestamp ? moment(parseInt(String(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0].timestamp))).fromNow() : "Never"}
+                </Flex>
+                <br />
+                <Flex>ID: {item.device_id}</Flex>
+                <TextField
+                  label="Webhook URL"
+                  defaultValue={item.webhook_url ?? ""}
+                  onBlur={(e) =>
+                    client.models.Devices.update({
+                      device_id: item.device_id,
+                      webhook_url: e.target.value,
+                    })
+                  }
+                />
+                <SwitchField
+                  label="Webhook telemetry enabled"
+                  isChecked={item.webhook_telemetry_enabled === true}
+                  onChange={(e) =>
+                    client.models.Devices.update({
+                      device_id: item.device_id,
+                      webhook_telemetry_enabled: e.target.checked,
+                    })
+                  }
+                />
+                <SwitchField
+                  label="Webhook status enabled"
+                  isChecked={item.webhook_status_enabled === true}
+                  onChange={(e) =>
+                    client.models.Devices.update({
+                      device_id: item.device_id,
+                      webhook_status_enabled: e.target.checked,
+                    })
+                  }
+                />
+                {item.device_type === "esp32" && (
+                  <>
+                    <TextField
+                      label="Send interval"
+                      type="number"
+                      min={60}
+                      descriptiveText="Minimum 60 seconds"
+                      key={`${item.device_id}-${desired ?? ""}-${reported ?? ""}`}
+                      defaultValue={desired != null ? String(desired / 1000) : reported != null ? String(reported / 1000) : ""}
+                      onBlur={(e) => {
+                        const sendInterval = Number(e.target.value);
+                        if (!Number.isInteger(sendInterval) || sendInterval < 60) return;
+                        client.mutations.UpdateDeviceShadow({
+                          device_id: item.device_id,
+                          sendInterval,
+                        });
+                      }}
+                    />
+                    <div>Current: {reported != null ? reported / 1000 : "unknown"} seconds</div>
+                    {desired !== reported && desired != null && (
+                      <div>Pending: {desired / 1000} seconds</div>
+                    )}
+                  </>
+                )}
+                <br />
+                <Button variation="destructive" isFullWidth onClick={() => deleteDevice(item.device_id)}>
+                  Delete
+                </Button>
+              </View>
+            </Card>
+          );
+        }}
       </Collection>
 
       <Divider padding="xs" />

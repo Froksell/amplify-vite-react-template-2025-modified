@@ -3,6 +3,8 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
 import { graphqlIoTCoreStatus } from '../functions/graphqlIoTCoreStatus/resource';
 import { pollSmhi } from '../jobs/pollSmhi/resource';
+import { updateDeviceShadow } from '../functions/updateDeviceShadow/resource';
+import { storeDeviceShadow } from '../functions/storeDeviceShadow/resource';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -19,7 +21,10 @@ const schema = a.schema({
       device_type: a.string().required(),
       status: a.string(),
       webhook_url: a.string(),
-      webhook_enabled: a.boolean()
+      webhook_telemetry_enabled: a.boolean(),
+      webhook_status_enabled: a.boolean(),
+      shadow_desired: a.json(),
+      shadow_reported: a.json(),
     })
     .identifier(['device_id'])
     .authorization((allow) => [
@@ -30,7 +35,6 @@ const schema = a.schema({
   Telemetry: a
     .model({
       device_id: a.string().required(),
-      //timestamp: a.timestamp().required(),
       timestamp: a.string().required(),
       temperature: a.float(),
       humidity: a.float(),
@@ -43,10 +47,22 @@ const schema = a.schema({
       allow.publicApiKey(),
     ]),
 
+  UpdateDeviceShadow: a
+    .mutation()
+    .arguments({
+      device_id: a.string().required(),
+      sendInterval: a.integer().required(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(updateDeviceShadow)),
+
 }).authorization((allow) => [
   allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
-  allow.resource(graphqlIoTCoreStatus).to(['mutate']),
+  allow.resource(graphqlIoTCoreStatus).to(['query', 'mutate']),
   allow.resource(pollSmhi).to(['query', 'mutate']),
+  allow.resource(updateDeviceShadow).to(['query', 'mutate']),
+  allow.resource(storeDeviceShadow).to(['query', 'mutate'])
 ]);
 
 
